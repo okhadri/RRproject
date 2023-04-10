@@ -1,0 +1,65 @@
+public static async Task<IActionResult> Run(
+    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+    ILogger log)
+{
+    string name = req.Query["name"];
+    string timeIn = req.Query["timein"];
+    string timeOut = req.Query["timeout"];
+
+string responseMessage = "";
+double hoursWorked = 0;
+double price = 0;
+
+
+DateTime dtTimeIn = DateTime.Parse(timeIn);
+DateTime dtTimeOut = DateTime.Parse(timeOut);
+TimeSpan ts = dtTimeOut - dtTimeIn;
+hoursWorked = ts.TotalHours;
+if (name == "Task A")
+{
+    price = hoursWorked * 10;
+}
+else if (name == "Task B")
+{
+    price = hoursWorked * 15;
+}
+else
+{
+    price = hoursWorked * 20;
+}
+responseMessage = "{ \"hoursWorked\": \"" + hoursWorked + "\", \"price\": \"" + price + "\" }";
+return new OkObjectResult(responseMessage);
+
+
+using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+
+namespace MyFunctionApp
+{
+    public static class MyFunction
+    {
+        [FunctionName("MyFunction")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            ILogger log)
+        {
+            string name = req.Query["name"];
+            string timeIn = req.Query["timein"];
+            string timeOut = req.Query["timeout"];
+
+            string responseMessage = "";
+            double hoursWorked = 0;
+            double price = 0;
+
+            DateTime dtTimeIn = DateTime.Parse(timeIn);
+            DateTime dtTimeOut = DateTime.Parse(timeOut);
+            TimeSpan ts = dtTimeOut - dtTimeIn;
+            hoursWorked = ts.TotalHours;
+
+            if (name == "Task A")
+            {
+                price = hoursWorked * 10;
